@@ -1,23 +1,12 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Post, Group
-
-
+from django.shortcuts import render
+from .models import Post, User
+import datetime
 def index(request):
-    template = 'posts/index.html'
-    posts = Post.objects.all()[:10]
-    context = {
-        'posts': posts,
-    }
-    return render(request, template, context)
-
-
-def group_list(request, slug):
-    template = 'posts/group_list.html'
-    group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.filter(group=group)[:10]
-    context = {
-        'text': slug,
-        'group': group,
-        'posts': posts,
-    }
-    return render(request, template, context)
+    author = User.objects.get(username='leo')
+    keyword = "утро"
+    posts = None
+    start_date = datetime.date(1854, 7, 7)
+    end_date = datetime.date(1854, 7, 21)
+    #posts = Post.objects.all()
+    posts = Post.objects.filter(text__contains=keyword).filter(author=author).filter(pub_date__range=(start_date, end_date))
+    return render(request, "index.html", {"posts": posts})
